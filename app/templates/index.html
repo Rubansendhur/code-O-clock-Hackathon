@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Waste Reduction Network</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* Header Section */
+        header {
+            background: url('https://images.unsplash.com/photo-1521747116042-5a810fda9664') no-repeat center center/cover;
+            height: 60vh;
+            color: white;
+            position: relative;
+        }
+
+        /* Dark overlay for the header image */
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .navbar {
+            width: 80%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 10px 0;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar ul li {
+            margin-left: 15px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 16px;
+            background-color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #555;
+        }
+
+        /* Search bar styling in the header */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #218838;
+        }
+
+        /* Main Container and Mission Section */
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .cta-btn:hover {
+            background-color: #218838;
+            transform: translateY(-3px);
+        }
+
+        .item-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .item-list li {
+            font-size: 18px;
+            color: #333;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .item-list img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 8px;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 50px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Mission Section with Images */
+        .mission-content {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .mission-item {
+            flex-basis: 30%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .mission-item img {
+            max-width: 80px;
+            margin-bottom: 20px;
+        }
+
+        /* Donate Section */
+        .donate-section {
+            margin-top: 50px;
+        }
+
+        .donate-section h2 {
+            font-size: 28px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        /* Form styling for listing an item */
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .form-container input, .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <h1>Digital Waste Reduction Network</h1>
+        <ul>
+            <li><a href="#donate-section">Donate</a></li> <!-- Scroll to the Donate section -->
+            <li><a href="#">Swap</a></li>
+            <li><a href="#">Lend</a></li>
+            <li><a href="#">Request</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Login / Register</a></li>
+            {% endif %}
+        </ul>
+        <!-- Search bar in the navbar -->
+        <div class="search-bar">
+            <form action="{{ url_for('search_items') }}" method="GET">
+                <input type="text" name="query" placeholder="Search for an item...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <h2>Our Mission</h2>
+    <p>
+        The Digital Waste Reduction Network connects individuals and businesses to help reduce waste by facilitating the redistribution of surplus resources such as food, clothing, and other goods.
+    </p>
+
+    <!-- Unique Mission Content Section with Icons -->
+    <div class="mission-content">
+        <div class="mission-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/3190/3190604.png" alt="Sustainability Icon">
+            <h3>Sustainability</h3>
+            <p>Promoting sustainable practices by reusing and reducing waste.</p>
+        </div>
+        <div class="mission-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/2543/2543651.png" alt="Community Icon">
+            <h3>Community</h3>
+            <p>Building a stronger community by sharing surplus resources.</p>
+        </div>
+        <div class="mission-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/3062/3062647.png" alt="Efficiency Icon">
+            <h3>Efficiency</h3>
+            <p>Efficiently matching resources to those in need within the community.</p>
+        </div>
+    </div>
+
+    <!-- Donate Section with List an Item and Available Items -->
+    <div id="donate-section" class="donate-section">
+        <h2>Donate Items</h2>
+
+        <div class="form-container">
+            <h3>List an Item</h3>
+            <form action="{{ url_for('list_item') }}" method="POST">
+                <label for="name">Item Name:</label>
+                <input type="text" id="name" name="name" required>
+        
+                <!-- Food or Non-Food toggle -->
+                <label for="category">Is this a food item?</label>
+                <select id="category" name="category" required onchange="toggleNonFoodOptions()">
+                    <option value="Food">Food</option>
+                    <option value="Non-Food">Non-Food</option>
+                </select>
+        
+                <!-- Non-Food options (hidden by default) -->
+                <div id="non-food-options" style="display: none;">
+                    <label for="non_food_category">Non-Food Category:</label>
+                    <select id="non_food_category" name="non_food_category">
+                        <option value="Clothing">Clothing</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Books">Books</option>
+                    </select>
+                </div>
+        
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" required>
+        
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" required>
+        
+                <!-- Expiry Date for food items only -->
+                <label for="expiry_date" id="expiry-date-label">Expiry Date (optional):</label>
+                <input type="date" id="expiry_date" name="expiry_date">
+        
+                <!-- Storytelling feature -->
+                <label for="story">Share the story behind your donation (optional):</label>
+                <textarea id="story" name="story" rows="4" placeholder="Why are you donating this item? Share a story or reason..."></textarea>
+        
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        
+        
+
+        <!-- Display available items with random images -->
+        <div class="item-list">
+            <h3>Available Surplus Items</h3>
+            <ul>
+                {% for item in items %}
+                    <li id="item-{{ item.id }}" 
+                        {% if item in matched_items %} style="border: 2px solid green;" {% endif %}>
+                        <img src="https://picsum.photos/80?random={{ loop.index }}" alt="Item Image">
+                        <strong>{{ item.name }}</strong> - {{ item.type }} ({{ item.quantity }}) at {{ item.location }}
+                        
+                        {% if item.allocated_to %}
+                            <p><strong>Already allocated</strong></p>
+                        {% else %}
+                            <a href="{{ url_for('request_item', item_id=item.id) }}" class="cta-btn">Request Item</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2024 Digital Waste Reduction Network | Making the world a better place, one item at a time.</p>
+</footer>
+
+<!-- Smooth Scroll Script -->
+<script>
+    // Add smooth scrolling to all anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+
+
+</body>
+</html>

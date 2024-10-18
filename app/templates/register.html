@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .register-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        .register-container h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #17a2b8;
+        }
+
+        button {
+            padding: 10px 0;
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #138496;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #17a2b8;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h1>Register</h1>
+
+    <!-- Flash messages for feedback -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="message">
+                {% for category, message in messages %}
+                    <p class="{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <label for="username">{{ form.username.label }}</label>
+        {{ form.username(size=32) }}
+
+        <label for="email">{{ form.email.label }}</label>
+        {{ form.email(size=32) }}
+
+        <label for="password">{{ form.password.label }}</label>
+        {{ form.password(size=32) }}
+
+        <label for="password2">{{ form.password2.label }}</label>
+        {{ form.password2(size=32) }}
+
+        <label for="location">{{ form.location.label }}</label>
+        {{ form.location(size=32) }}
+
+        <button type="submit">{{ form.submit() }}</button>
+    </form>
+
+    <p class="login-link">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+</div>
+
+</body>
+</html>

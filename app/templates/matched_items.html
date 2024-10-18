@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matched Surplus Items</title>
+</head>
+<body>
+    <h1>Matched Surplus Items</h1>
+    <ul>
+        {% for item in matched_items %}
+            <li>{{ item.name }} - {{ item.type }} at {{ item.location }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
