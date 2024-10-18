@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Digital Waste Reduction Network</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        nav {
+            background-color: #17a2b8;
+            padding: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .dashboard-container {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            padding-bottom: 30px;
+        }
+
+        .points-display {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .points-display h2 {
+            margin: 0;
+        }
+
+        .points-display p {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            height: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress {
+            background-color: #218838;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Badges Section */
+        .badges-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .badge {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 50%;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .badge img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .badge h4 {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .badge:hover {
+            transform: scale(1.1);
+        }
+
+        .section {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .section h3 {
+            color: #28a745;
+        }
+
+        .section ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section ul li {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1 1 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .section ul li img {
+            max-width: 80px;
+            margin-bottom: 10px;
+        }
+
+        .section ul li:last-child {
+            border-bottom: none;
+        }
+
+        .cta-btn {
+            background-color: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .cta-btn:hover {
+            background-color: #138496;
+        }
+
+        .milestones {
+            margin-top: 30px;
+        }
+
+        .milestone {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .milestone h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .milestone p {
+            margin: 5px 0 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav>
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('list_item') }}">List Item</a>
+    <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</nav>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Welcome to your Dashboard, {{ current_user.username }}!</h1>
+    </div>
+
+    <!-- Points Section with Progress Bar -->
+    <div class="points-display">
+        <h2>Your Points: {{ points }}</h2>
+        <p>Keep contributing to unlock more rewards!</p>
+        <div class="progress-bar">
+            <div class="progress" style="width: {{ points_percentage }}%;"></div>
+        </div>
+        <p>{{ points_percentage }}% of the way to your next level!</p>
+    </div>
+
+    <!-- Badges Section -->
+    <div class="badges-container">
+        <!-- Example badges -->
+        <div class="badge">
+            <img src="https://cdn-icons-png.flaticon.com/512/2555/2555108.png" alt="First Donation Badge">
+            <h4>First Donation</h4>
+        </div>
+        <div class="badge">
+            <img src="https://cdn-icons-png.flaticon.com/512/684/684831.png" alt="100kg Donated Badge">
+            <h4>100kg Donated</h4>
+        </div>
+        <div class="badge">
+            <img src="https://cdn-icons-png.flaticon.com/512/2102/2102647.png" alt="Frequent Donor Badge">
+            <h4>Frequent Donor</h4>
+        </div>
+    </div>
+
+    <!-- Items Listed by the User -->
+    <div class="section">
+        <h3>Your Listed Items</h3>
+        <ul>
+            {% for item in user_items %}
+                <li>
+                    <img src="https://cdn-icons-png.flaticon.com/512/679/679796.png" class="icon">
+                    <span>{{ item.name }} - {{ item.quantity }} ({{ item.location }})</span>
+                </li>
+            {% else %}
+                <li>You have not listed any items yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Milestones Section -->
+    <div class="milestones">
+        <div class="milestone">
+            <h4>100kg Donated</h4>
+            <p>Progress: {{ total_donated_kg }} / 100kg</p>
+        </div>
+        <div class="milestone">
+            <h4>50 Items Donated</h4>
+            <p>Progress: {{ total_items_donated }} / 50</p>
+        </div>
+        <div class="milestone">
+            <h4>Frequent Donor</h4>
+            <p>Progress: {{ total_donations }} Donations</p>
+        </div>
+    </div>
+
+    <a href="{{ url_for('list_item') }}" class="cta-btn">List a New Item</a>
+</div>
+
+</body>
+</html>

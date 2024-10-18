@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect, url_for
+import random
+from flask import Request, render_template, request, redirect, url_for
 from app import app, db
-from app.models import Item
+from app.models import Item, ItemRequest
 from geopy.distance import geodesic
 from flask_login import login_required
+
 
 # Route for displaying all items
 @app.route('/')
@@ -10,13 +12,12 @@ def index():
     items = Item.query.all()  # Fetch all items from the database
     return render_template('index.html', items=items)
 
-# Route for listing a new item
 @app.route('/list-item', methods=['GET', 'POST'])
 @login_required
 def list_item():
     if request.method == 'POST':
         name = request.form['name']
-        item_category = request.form['category']  # 'Food' or 'Non-Food'
+        item_category = request.form['category']
         non_food_category = request.form.get('non_food_category') if item_category == 'Non-Food' else None
         quantity = request.form['quantity']
         location = request.form['location']
@@ -25,7 +26,7 @@ def list_item():
         expiry_date = request.form.get('expiry_date') if item_category == 'Food' else None
         story = request.form.get('story')
 
-        # Create and add a new item to the database, link to the current user
+        # Create and add a new item to the database
         new_item = Item(
             name=name,
             type=item_category if item_category == 'Food' else non_food_category,
@@ -38,9 +39,12 @@ def list_item():
             user_id=current_user.id
         )
         db.session.add(new_item)
+
+        # Award points for listing the item
+        current_user.points += 10
         db.session.commit()
 
-        flash('Item listed successfully!', 'success')
+        flash('Item listed successfully! You earned 10 points!', 'success')
         return redirect(url_for('index'))
 
     return render_template('list_item.html')
@@ -160,9 +164,59 @@ def request_item(item_id):
     
     # Allocate the item to the current user
     item.allocated_to = current_user.id
+    current_user.points += 5  # Add points for requesting an item
     db.session.commit()
     
-    flash('Item successfully requested!', 'success')
+    flash('Item successfully requested! You earned 5 points!', 'success')
     return redirect(url_for('index'))
+
+
+# Dashboard Route (Flask)
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # Fetch user's listed items
+    user_items = Item.query.filter_by(user_id=current_user.id).all()
+
+    # Fetch user's requested items
+    requested_items = ItemRequest.query.filter_by(user_id=current_user.id).all()
+
+    # Fetch total points for the current user
+    user_points = current_user.points
+
+    # Set the current level and progress
+    next_milestone = 100  # For example, each level is achieved every 100 points
+    points_percentage = min((user_points / next_milestone) * 100, 100)
+    
+    # Set current level based on points (e.g., level increases every 100 points)
+    level = user_points // next_milestone + 1
+
+    # Random surprise gifts for reaching 100%
+    if points_percentage == 100:
+        gifts = ['Extra 20 points', 'Free Merchandise', 'Digital Certificate']
+        surprise_gift = random.choice(gifts)
+    else:
+        surprise_gift = None
+
+    return render_template(
+        'dashboard.html',
+        user_items=user_items,
+        requested_items=requested_items,
+        points=user_points,
+        points_percentage=points_percentage,
+        level=level,
+        surprise_gift=surprise_gift
+    )
+
+
+@app.route('/leaderboard')
+@login_required
+def leaderboard():
+    # Query top 10 users by points
+    top_users = User.query.order_by(User.points.desc()).limit(10).all()
+    return render_template('leaderboard.html', top_users=top_users)
+
+
+
 
 

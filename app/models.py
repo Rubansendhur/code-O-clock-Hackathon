@@ -11,6 +11,9 @@ class User(UserMixin,db.Model):
     location = db.Column(db.String(100), nullable=False)
     points = db.Column(db.Integer, default=0)
 
+    def __repr__(self):
+        return f'<User {self.username}>'
+
     # Method to set password during registration
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -35,3 +38,8 @@ class Item(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     allocated_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
+class ItemRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item_name = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
