@@ -221,7 +221,7 @@
             margin-bottom: 8px;
         }
 
-        .form-container input, .form-container select {
+        .form-container input, .form-container select, .form-container textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -241,6 +241,11 @@
         .form-container button:hover {
             background-color: #218838;
         }
+
+        /* Non-food item category selector */
+        #non-food-options {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -249,13 +254,13 @@
     <div class="navbar">
         <h1>Digital Waste Reduction Network</h1>
         <ul>
-            <li><a href="#donate-section">Donate</a></li> <!-- Scroll to the Donate section -->
-            <li><a href="#">Swap</a></li>
-            <li><a href="#">Lend</a></li>
-            <li><a href="#">Request</a></li>
+            <li><a href="#donate-section">Donate</a></li>
+            <li><a href="{{ url_for('swap_item') }}">Swap</a></li>
+            <li><a href="{{ url_for('lend_item') }}">Lend</a></li>
+            <li><a href="{{ url_for('request_item_v2') }}">Request</a></li>
             {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                <li></li><a href="{{ url_for('dashboard') }}" class="cta-btn">Dashboard</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="cta-btn">Dashboard</a></li>
             {% else %}
                 <li><a href="{{ url_for('login') }}">Login / Register</a></li>
             {% endif %}
@@ -301,19 +306,19 @@
 
         <div class="form-container">
             <h3>List an Item</h3>
-            <form action="{{ url_for('list_item') }}" method="POST">
+            <form action="{{ url_for('list_item') }}" method="POST" enctype="multipart/form-data">
                 <label for="name">Item Name:</label>
                 <input type="text" id="name" name="name" required>
-        
+
                 <!-- Food or Non-Food toggle -->
                 <label for="category">Is this a food item?</label>
                 <select id="category" name="category" required onchange="toggleNonFoodOptions()">
                     <option value="Food">Food</option>
                     <option value="Non-Food">Non-Food</option>
                 </select>
-        
+
                 <!-- Non-Food options (hidden by default) -->
-                <div id="non-food-options" style="display: none;">
+                <div id="non-food-options">
                     <label for="non_food_category">Non-Food Category:</label>
                     <select id="non_food_category" name="non_food_category">
                         <option value="Clothing">Clothing</option>
@@ -322,37 +327,38 @@
                         <option value="Books">Books</option>
                     </select>
                 </div>
-        
+
                 <label for="quantity">Quantity:</label>
                 <input type="number" id="quantity" name="quantity" required>
-        
+
                 <label for="location">Location:</label>
                 <input type="text" id="location" name="location" required>
-        
+
                 <!-- Expiry Date for food items only -->
                 <label for="expiry_date" id="expiry-date-label">Expiry Date (optional):</label>
                 <input type="date" id="expiry_date" name="expiry_date">
-        
+
                 <!-- Storytelling feature -->
                 <label for="story">Share the story behind your donation (optional):</label>
                 <textarea id="story" name="story" rows="4" placeholder="Why are you donating this item? Share a story or reason..."></textarea>
-        
+
+                <label for="image">Upload an image:</label>
+                <input type="file" id="image" name="image" accept="image/*">
+
                 <button type="submit">Submit</button>
             </form>
         </div>
-        
-        
 
         <!-- Display available items with random images -->
         <div class="item-list">
             <h3>Available Surplus Items</h3>
             <ul>
                 {% for item in items %}
-                    <li id="item-{{ item.id }}" 
+                    <li id="item-{{ item.id }}"
                         {% if item in matched_items %} style="border: 2px solid green;" {% endif %}>
                         <img src="https://picsum.photos/80?random={{ loop.index }}" alt="Item Image">
                         <strong>{{ item.name }}</strong> - {{ item.type }} ({{ item.quantity }}) at {{ item.location }}
-                        
+
                         {% if item.allocated_to %}
                             <p><strong>Already allocated</strong></p>
                         {% else %}
@@ -380,8 +386,25 @@
             });
         });
     });
-</script>
 
+    // Toggle non-food category options
+    function toggleNonFoodOptions() {
+        var category = document.getElementById('category').value;
+        var nonFoodOptions = document.getElementById('non-food-options');
+        var expiryDateLabel = document.getElementById('expiry-date-label');
+        var expiryDateInput = document.getElementById('expiry_date');
+
+        if (category === 'Non-Food') {
+            nonFoodOptions.style.display = 'block';
+            expiryDateLabel.style.display = 'none';
+            expiryDateInput.style.display = 'none';
+        } else {
+            nonFoodOptions.style.display = 'none';
+            expiryDateLabel.style.display = 'block';
+            expiryDateInput.style.display = 'block';
+        }
+    }
+</script>
 
 </body>
 </html>

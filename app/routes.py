@@ -1,10 +1,19 @@
+import os
 import random
-from flask import Request, render_template, request, redirect, url_for
+from flask import Request, render_template, request, redirect, url_for, flash
+from werkzeug.utils import secure_filename
 from app import app, db
+from app.image_captioning import generate_caption
 from app.models import Item, ItemRequest
 from geopy.distance import geodesic
 from flask_login import login_required
 
+
+# Allowed file extensions for image uploads
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Route for displaying all items
 @app.route('/')
@@ -212,9 +221,153 @@ def dashboard():
 @app.route('/leaderboard')
 @login_required
 def leaderboard():
-    # Query top 10 users by points
+    # Fetch top 10 users by points
     top_users = User.query.order_by(User.points.desc()).limit(10).all()
-    return render_template('leaderboard.html', top_users=top_users)
+
+    # Calculate progress to the next rank for each user
+    leaderboard_data = []
+    for user in top_users:
+        next_milestone = (user.points // 100 + 1) * 100  # E.g., next milestone at every 100 points
+        progress_to_next_rank = min((user.points / next_milestone) * 100, 100)
+        leaderboard_data.append({
+            'username': user.username,
+            'points': user.points,
+            'progress_to_next_rank': progress_to_next_rank
+        })
+
+    return render_template('leaderboard.html', top_users=leaderboard_data)
+@app.route('/swap-item', methods=['GET', 'POST'])
+@login_required
+def swap_item():
+    generated_caption = None  # Initialize with None
+    if request.method == 'POST':
+        # Get form data
+        name = request.form['name']
+        category = request.form['category']
+        quantity = request.form['quantity']
+        location = request.form['location']
+
+        # Check if an image file is uploaded
+        if 'image' not in request.files or request.files['image'].filename == '':
+            flash('No image uploaded!', 'danger')
+            return redirect(request.url)
+
+        image_file = request.files['image']
+
+        if image_file and allowed_file(image_file.filename):
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(image_path)
+
+            # Generate the caption using the AI model
+            generated_caption = generate_caption(image_path)
+
+            # Save the item in the database with the AI-generated caption
+            new_swap_item = Item(
+                name=name,
+                type=category,
+                quantity=quantity,
+                location=location,
+                image=filename,
+                description=generated_caption,  # AI-generated description
+                user_id=current_user.id
+            )
+            db.session.add(new_swap_item)
+            db.session.commit()
+
+            flash('Item listed for swap successfully with AI-generated caption!', 'success')
+            return render_template('swap_item.html', generated_caption=generated_caption)  # Pass the description to the template
+
+    return render_template('swap_item.html', generated_caption=generated_caption)
+
+
+@app.route('/lend-item', methods=['GET', 'POST'])
+@login_required
+def lend_item():
+    if request.method == 'POST':
+        # Get form data
+        name = request.form['name']
+        category = request.form['category']
+        quantity = request.form['quantity']
+        location = request.form['location']
+
+        # Check if an image file is uploaded
+        if 'image' not in request.files or request.files['image'].filename == '':
+            flash('No image uploaded!', 'danger')
+            return redirect(request.url)
+
+        image_file = request.files['image']
+
+        if image_file and allowed_file(image_file.filename):
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(image_path)
+
+            # Generate the caption using the AI model
+            generated_caption = generate_caption(image_path)
+
+            # Save the item in the database with the AI-generated caption
+            new_lend_item = Item(
+                name=name,
+                type=category,
+                quantity=quantity,
+                location=location,
+                image=filename,
+                description=generated_caption,  # AI-generated description
+                user_id=current_user.id
+            )
+            db.session.add(new_lend_item)
+            db.session.commit()
+
+            flash('Item listed for lending successfully with AI-generated caption!', 'success')
+            return redirect(url_for('index'))
+
+    return render_template('lend_item.html')
+
+@app.route('/request-item', methods=['GET', 'POST'])
+@login_required
+def request_item_v2():
+    if request.method == 'POST':
+        # Get form data
+        name = request.form['name']
+        category = request.form['category']
+        quantity = request.form['quantity']
+        location = request.form['location']
+
+        # Check if an image file is uploaded
+        if 'image' not in request.files or request.files['image'].filename == '':
+            flash('No image uploaded!', 'danger')
+            return redirect(request.url)
+
+        image_file = request.files['image']
+
+        if image_file and allowed_file(image_file.filename):
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(image_path)
+
+            # Generate the caption using the AI model
+            generated_caption = generate_caption(image_path)
+
+            # Save the item in the database with the AI-generated caption
+            new_request = ItemRequest(
+                name=name,
+                type=category,
+                quantity=quantity,
+                location=location,
+                image=filename,
+                description=generated_caption,  # AI-generated description
+                user_id=current_user.id
+            )
+            db.session.add(new_request)
+            db.session.commit()
+
+            flash('Item requested successfully with AI-generated caption!', 'success')
+            return redirect(url_for('index'))
+
+    return render_template('request_item.html')
+
+
 
 
 
