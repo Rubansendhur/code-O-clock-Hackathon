@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 
 # MySQL configuration using the 'admin' user
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ruban:0000@localhost/digital_waste_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Born%40762004@localhost/digital_waste_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Simple hardcoded secret key for CSRF protection
